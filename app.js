@@ -6,6 +6,7 @@ var logger = require('morgan');
 const mongoose = require('mongoose');
 const products = require('./routes/products');
 const loginRouter = require('./routes/login');
+const checkinRouter = require('./routes/checkin'); // เรียกใช้เส้นทาง Checkin
 const cors = require('cors')
 require('dotenv').config()
 const uri = process.env.MONGO_URI
@@ -36,6 +37,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/products', products);
 app.use('/login', loginRouter);
+app.use('/checkin', checkinRouter); // เรียกใช้เส้นทาง API Checkin
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
