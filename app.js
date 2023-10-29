@@ -5,8 +5,11 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require('mongoose');
 const products = require('./routes/products');
+const cors = require('cors')
 require('dotenv').config()
 const uri = process.env.MONGO_URI
+
+app.use(cors());
 
 mongoose.Promise = global.Promise;
 
