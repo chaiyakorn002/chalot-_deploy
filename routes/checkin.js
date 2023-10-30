@@ -2,10 +2,10 @@
 const express = require('express');
 const router = express.Router();
 const Checkin = require('../models/Checkin');
-const authMiddleware = require('../middlewares/auth'); // Middleware สำหรับการตรวจสอบการรับรองตัวตน
+// const authMiddleware = require('../middlewares/auth'); // คอมเมนต์หรือลบบรรทัดนี้
 
 // POST /checkin - สำหรับบันทึก Checkin
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', async (req, res) => { // ลบการใช้ authMiddleware ที่นี่
   const { userId, time, image, location } = req.body;
 
   try {
