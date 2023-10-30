@@ -2,28 +2,43 @@
 const express = require('express');
 const router = express.Router();
 const Checkin = require('../models/Checkin');
-const User = require('../models/User'); // สมมติว่าคุณมีโมเดล User สำหรับผู้ใช้
+const User = require('../models/User');
+const dayjs = require('dayjs'); // หรือใช้ require('moment');
 
 // POST /checkin/insert - สำหรับบันทึก Checkin
 router.post('/', async (req, res, next) => {
-  const { time, image, location } = req.body;
+  const { userId, time, image, location } = req.body;
 
   try {
-    if (!req.body.userId) {
-      return res.status(400).json({ error: 'กรุณาระบุ userId' });
+    if (!userId || !time || !image || !location) {
+      return res.status(400).json({ error: 'กรุณาระบุข้อมูลครบถ้วน' });
     }
 
-    // ดึงข้อมูล User จากฐานข้อมูล
-    const user = await User.findById(req.body.userId);
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ error: 'User ไม่พบในระบบ' });
     }
 
-    // สร้าง Checkin โดยใช้ข้อมูล userId ที่ดึงมาจากฐานข้อมูล
+    // แปลงค่า `time` เป็นรูปแบบ ISO 8601 ด้วย dayjs หรือ moment
+    const parsedTime = dayjs(time); // หรือ moment(time)
+
+    if (!parsedTime.isValid()) {
+      return res.status(400).json({ error: 'ข้อมูลเวลาไม่ถูกต้อง' });
+    }
+
+    if (
+      !Array.isArray(location) ||
+      location.length !== 2 ||
+      typeof location[0] !== 'number' ||
+      typeof location[1] !== 'number'
+    ) {
+      return res.status(400).json({ error: 'ข้อมูล location ไม่ถูกต้อง' });
+    }
+
     const checkin = new Checkin({
-      userId: user._id, // ใช้ _id ของ User
-      time,
+      userId: user._id,
+      time: parsedTime.toDate(), // ใช้ค่าที่แปลงแล้ว
       image,
       location: {
         type: 'Point',
