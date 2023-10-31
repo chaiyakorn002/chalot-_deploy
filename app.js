@@ -8,8 +8,7 @@ const products = require('./routes/products');
 const loginRouter = require('./routes/login');
 const checkinRouter = require('./routes/checkin'); // เรียกใช้เส้นทาง Checkin
 const uploadRouter =  require('./routes/uploadingimages');
-const getimageRouter = require('./routes/getimage');
-const FloderUpload = require('./uploads');
+const imagePath = path.join(__dirname, 'uploads', imageName);
 
 const cors = require('cors')
 require('dotenv').config()
