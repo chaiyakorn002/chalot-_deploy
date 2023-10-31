@@ -38,6 +38,7 @@ app.use('/users', usersRouter);
 app.use('/products', products);
 app.use('/login', loginRouter);
 app.use('/checkin', checkinRouter); // เรียกใช้เส้นทาง API Checkin
+app.use('/app/routes/images', express.static(path.join(__dirname, 'app/routes/images')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
