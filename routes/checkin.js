@@ -8,7 +8,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
 // Define the directory path for images
-const imagesDir = path.join(__dirname, 'images');
+const imagesDir = path.join(__dirname, '../public/images');
 
 // Ensure the images directory exists
 if (!fs.existsSync(imagesDir)) {
