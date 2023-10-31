@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const products = require('./routes/products');
 const loginRouter = require('./routes/login');
 const checkinRouter = require('./routes/checkin'); // เรียกใช้เส้นทาง Checkin
+const uploadRouter =  require('./routes/uploadingimages')
 const cors = require('cors')
 require('dotenv').config()
 const uri = process.env.MONGO_URI
@@ -38,6 +39,7 @@ app.use('/users', usersRouter);
 app.use('/products', products);
 app.use('/login', loginRouter);
 app.use('/checkin', checkinRouter); // เรียกใช้เส้นทาง API Checkin
+app.use('/upload', uploadRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
