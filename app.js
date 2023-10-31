@@ -39,18 +39,32 @@ app.use('/products', products);
 app.use('/login', loginRouter);
 app.use('/checkin', checkinRouter); // เรียกใช้เส้นทาง API Checkin
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.get('/images/:imageId', async (req, res) => {
+  const imageId = req.params.imageId;
+
+  try {
+    const checkin = await Checkin.findById(imageId);
+
+    if (!checkin) {
+      return res.status(404).json({ error: 'ไม่พบรูปภาพ' });
+    }
+
+    // ส่งรูปภาพกลับไปให้ผู้ใช้
+    res.sendFile(checkin.image);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'เกิดข้อผิดพลาดในการแสดงรูปภาพ' });
+  }
+});
+
+
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
+app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
   res.render('error');
 });

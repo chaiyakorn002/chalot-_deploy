@@ -20,7 +20,7 @@ const upload = multer({ storage: storage });
 
 // POST /checkin/insert - สำหรับบันทึก Checkin
 router.post('/', upload.single('image'), async (req, res, next) => {
-  const { userId, time, location } = req.body; // Removed 'image' from here
+  const { userId, time, location } = req.body;
 
   try {
     if (!userId || !time || !location) {
@@ -33,8 +33,7 @@ router.post('/', upload.single('image'), async (req, res, next) => {
       return res.status(404).json({ error: 'User ไม่พบในระบบ' });
     }
 
-    // แปลงค่า `time` เป็นรูปแบบ ISO 8601 ด้วย dayjs หรือ moment
-    const parsedTime = dayjs(time); // หรือ moment(time)
+    const parsedTime = dayjs(time);
 
     if (!parsedTime.isValid()) {
       return res.status(400).json({ error: 'ข้อมูลเวลาไม่ถูกต้อง' });
@@ -49,12 +48,12 @@ router.post('/', upload.single('image'), async (req, res, next) => {
       return res.status(400).json({ error: 'ข้อมูล location ไม่ถูกต้อง' });
     }
 
-    const imagePath = 'images/' + req.file.filename; // Get the image path from multer
+    const imagePath = 'images/' + req.file.filename;
 
     const checkin = new Checkin({
       userId: user._id,
       time: parsedTime.toDate(),
-      image: imagePath, // Set the image path from multer
+      image: imagePath,
       location: {
         type: 'Point',
         coordinates: location,
