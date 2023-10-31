@@ -19,12 +19,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.6.3",
     "morgan": "~1.9.1",
-<<<<<<< HEAD
-    "multer": "^1.4.5-lts.1"
-=======
     "multer": "^1.4.5-lts.1",
     "typescript": "^5.2.2",
     "uuid": "^9.0.1"
->>>>>>> b11ba4daa4ec0be359aab565c4109ab16ba4b03a
   }
 }
