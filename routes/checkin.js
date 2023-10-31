@@ -63,7 +63,7 @@ router.post('/', async (req, res, next) => {
     });
 
     const savedCheckin = await checkin.save();
-    res.status(201).json(savedCheckin);
+    res.status(201).json({ imagePath: imagePath, message: 'Checkin สำเร็จ' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'เกิดข้อผิดพลาดในการบันทึก Checkin' });
