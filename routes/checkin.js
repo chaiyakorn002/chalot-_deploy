@@ -3,24 +3,27 @@ const router = express.Router();
 const Checkin = require('../models/Checkin');
 const User = require('../models/User');
 const dayjs = require('dayjs'); // หรือใช้ require('moment');
-const path = require('path');
-const fs = require('fs');
-const { v4: uuidv4 } = require('uuid');
+const multer = require('multer'); // Import multer library
 
-// Define the directory path for images
-const imagesDir = path.join(__dirname, '../public/images'); // ใช้ __dirname เพื่อระบุเส้นทางอย่างถูกต้อง
+// Setup multer for file upload
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'images'); // Set the destination folder for uploaded files
+  },
+  filename: function (req, file, cb) {
+    // Set the filename for the uploaded file (you can customize this)
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
 
-// Ensure the images directory exists
-if (!fs.existsSync(imagesDir)) {
-  fs.mkdirSync(imagesDir, { recursive: true });
-}
+const upload = multer({ storage: storage });
 
-// POST /checkin - สำหรับบันทึก Checkin
-router.post('/', async (req, res, next) => {
-  const { userId, time, image, location } = req.body;
+// POST /checkin/insert - สำหรับบันทึก Checkin
+router.post('/', upload.single('image'), async (req, res, next) => {
+  const { userId, time, location } = req.body; // Removed 'image' from here
 
   try {
-    if (!userId || !time || !image || !location) {
+    if (!userId || !time || !location) {
       return res.status(400).json({ error: 'กรุณาระบุข้อมูลครบถ้วน' });
     }
 
@@ -46,16 +49,12 @@ router.post('/', async (req, res, next) => {
       return res.status(400).json({ error: 'ข้อมูล location ไม่ถูกต้อง' });
     }
 
-    // แปลง Base64 เป็นไฟล์รูปภาพ
-    const imageBuffer = Buffer.from(image, 'base64');
-    const imageFilename = uuidv4(); // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
-    const imagePath = path.join(imagesDir, `${imageFilename}.jpg`);
-    fs.writeFileSync(imagePath, imageBuffer);
+    const imagePath = 'images/' + req.file.filename; // Get the image path from multer
 
     const checkin = new Checkin({
       userId: user._id,
       time: parsedTime.toDate(),
-      image: imagePath, // ใช้ที่อยู่ของไฟล์รูปภาพ
+      image: imagePath, // Set the image path from multer
       location: {
         type: 'Point',
         coordinates: location,
@@ -63,7 +62,7 @@ router.post('/', async (req, res, next) => {
     });
 
     const savedCheckin = await checkin.save();
-    res.status(201).json({ imagePath: imagePath, message: 'Checkin สำเร็จ' });
+    res.status(201).json(savedCheckin);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'เกิดข้อผิดพลาดในการบันทึก Checkin' });
