@@ -8,7 +8,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
 // Define the directory path for images
-const imagesDir = '../public/images';
+const imagesDir = path.join(__dirname, '../public/images'); // ใช้ __dirname เพื่อระบุเส้นทางอย่างถูกต้อง
 
 // Ensure the images directory exists
 if (!fs.existsSync(imagesDir)) {
@@ -50,8 +50,8 @@ router.post('/', async (req, res, next) => {
     const imageBuffer = Buffer.from(image, 'base64');
     const imageFilename = uuidv4(); // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
     const imagePath = path.join(imagesDir, `${imageFilename}.jpg`);
-    fs.writeFileSync(imagePath, imageBuffer);    
-    
+    fs.writeFileSync(imagePath, imageBuffer);
+
     const checkin = new Checkin({
       userId: user._id,
       time: parsedTime.toDate(),
