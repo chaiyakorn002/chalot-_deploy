@@ -36,7 +36,6 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/products', products);
 app.use('/login', loginRouter);
-app.use('/checkin', checkinRouter); // เรียกใช้เส้นทาง API Checkin
 
 // Include the /upload route and Multer middleware
 const storage = multer.diskStorage({
