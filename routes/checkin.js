@@ -1,11 +1,26 @@
-// routes/checkin.js
 const express = require('express');
 const router = express.Router();
 const Checkin = require('../models/Checkin');
 const User = require('../models/User');
 const dayjs = require('dayjs'); // หรือใช้ require('moment');
+const fs = require('fs');
+const path = require('path');
 
-// POST /checkin/insert - สำหรับบันทึก Checkin
+// สร้างฟังก์ชันเพื่อบันทึกรูปภาพและสร้าง URL
+function saveImage(base64Image) {
+  const imageName = 'image_' + Date.now() + '.png';
+  const imagePath = path.join(__dirname, 'images', imageName); // ให้แก้ไขตำแหน่งที่บันทึกไฟล์ตามที่คุณต้องการ
+
+  const base64Data = base64Image.replace(/^data:image\/png;base64,/, '');
+
+  fs.writeFileSync(imagePath, base64Data, 'base64');
+
+  const imageUrl = '/images/' + imageName; // ตั้งค่าตามที่คุณบันทึกไฟล์
+
+  return imageUrl;
+}
+
+// POST /checkin - สำหรับบันทึก Checkin
 router.post('/', async (req, res, next) => {
   const { userId, time, image, location } = req.body;
 
@@ -20,8 +35,7 @@ router.post('/', async (req, res, next) => {
       return res.status(404).json({ error: 'User ไม่พบในระบบ' });
     }
 
-    // แปลงค่า `time` เป็นรูปแบบ ISO 8601 ด้วย dayjs หรือ moment
-    const parsedTime = dayjs(time); // หรือ moment(time)
+    const parsedTime = dayjs(time);
 
     if (!parsedTime.isValid()) {
       return res.status(400).json({ error: 'ข้อมูลเวลาไม่ถูกต้อง' });
@@ -36,10 +50,12 @@ router.post('/', async (req, res, next) => {
       return res.status(400).json({ error: 'ข้อมูล location ไม่ถูกต้อง' });
     }
 
+    const imageUrl = saveImage(image);
+
     const checkin = new Checkin({
       userId: user._id,
-      time: parsedTime.toDate(), // ใช้ค่าที่แปลงแล้ว
-      image,
+      time: parsedTime.toDate(),
+      image: imageUrl, // ใช้ URL แทน Base64
       location: {
         type: 'Point',
         coordinates: location,
