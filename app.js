@@ -7,7 +7,8 @@ const mongoose = require('mongoose');
 const products = require('./routes/products');
 const loginRouter = require('./routes/login');
 const checkinRouter = require('./routes/checkin'); // เรียกใช้เส้นทาง Checkin
-const uploadRouter =  require('./routes/uploadingimages')
+const uploadRouter =  require('./routes/uploadingimages');
+
 const cors = require('cors')
 require('dotenv').config()
 const uri = process.env.MONGO_URI
