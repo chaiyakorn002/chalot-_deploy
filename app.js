@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const products = require('./routes/products');
 const loginRouter = require('./routes/login');
 const checkinRouter = require('./routes/checkin'); // เรียกใช้เส้นทาง Checkin
-const uploadingImages = require('./routes/uploadingimages');
+const uploadingImages = require('./uploadingimages');
 
 
 const cors = require('cors')
@@ -42,6 +42,7 @@ app.use('/users', usersRouter);
 app.use('/products', products);
 app.use('/login', loginRouter);
 app.use('/checkin', checkinRouter); // เรียกใช้เส้นทาง API Checkin
+
 app.use('/upload', uploadingImages); // ใช้ตัวแปรหรือฟังก์ชันที่นำเข้ามาจาก uploadingimages.js
 
 // catch 404 and forward to error handler
