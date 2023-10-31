@@ -3,29 +3,27 @@ const router = express.Router();
 const Checkin = require('../models/Checkin');
 const User = require('../models/User');
 const dayjs = require('dayjs'); // หรือใช้ require('moment');
-const multer = require('multer');
+const path = require('path');
 const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
 
-// กำหนดตำแหน่งที่รูปภาพจะถูกบันทึก
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/images'); // ระบุเส้นทางเก็บรูปภาพ
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname); // กำหนดชื่อไฟล์ใหม่
-  },
-});
+// Define the directory path for images
+const imagesDir = 'C:\\Users\\chaiyakorn.pan\\Desktop\\express-api\\public\\images';
 
-const upload = multer({ storage: storage });
+// Ensure the images directory exists
+if (!fs.existsSync(imagesDir)) {
+  fs.mkdirSync(imagesDir, { recursive: true });
+}
 
 // POST /checkin - สำหรับบันทึก Checkin
-router.post('/', upload.single('image'), async (req, res, next) => {
-  const { userId, time, location } = req.body;
-  const imageBase64 = req.body.image; // รับข้อมูลรูปภาพในรูปแบบ Base64
-
-  // ตรวจสอบค่า userId, time, location
+router.post('/', async (req, res, next) => {
+  const { userId, time, image, location } = req.body;
 
   try {
+    if (!userId || !time || !image || !location) {
+      return res.status(400).json({ error: 'กรุณาระบุข้อมูลครบถ้วน' });
+    }
+
     const user = await User.findById(userId);
 
     if (!user) {
@@ -48,18 +46,16 @@ router.post('/', upload.single('image'), async (req, res, next) => {
       return res.status(400).json({ error: 'ข้อมูล location ไม่ถูกต้อง' });
     }
 
-    // แปลง Base64 เป็น buffer
-    const imageBuffer = Buffer.from(imageBase64, 'base64');
-    const imageFilename = Date.now() + '.jpg'; // สร้างชื่อไฟล์
-    const imagePath = `public/images/${imageFilename}`; // เส้นทางไฟล์รูปภาพ
-
-    // บันทึกรูปภาพในเซิร์ฟเวอร์
-    fs.writeFileSync(imagePath, imageBuffer);
-
+    // แปลง Base64 เป็นไฟล์รูปภาพ
+    const imageBuffer = Buffer.from(image, 'base64');
+    const imageFilename = uuidv4(); // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
+    const imagePath = path.join(imagesDir, `${imageFilename}.jpg`);
+    fs.writeFileSync(imagePath, imageBuffer);    
+    
     const checkin = new Checkin({
       userId: user._id,
       time: parsedTime.toDate(),
-      image: imagePath,
+      image: imagePath, // ใช้ที่อยู่ของไฟล์รูปภาพ
       location: {
         type: 'Point',
         coordinates: location,
@@ -67,7 +63,7 @@ router.post('/', upload.single('image'), async (req, res, next) => {
     });
 
     const savedCheckin = await checkin.save();
-    res.status(201).json(savedCheckin);
+    res.status(201).json({ imagePath: imagePath, message: 'Checkin สำเร็จ' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'เกิดข้อผิดพลาดในการบันทึก Checkin' });
