@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // เส้นทางสำหรับการอัปโหลดภาพ
-router.post('/upload', upload.single('image'), (req, res) => {
+router.post('/', upload.single('image'), (req, res) => {
   if (req.file) {
     // ไฟล์ถูกอัปโหลดสำเร็จ
     const imageUrl = req.file.filename;
