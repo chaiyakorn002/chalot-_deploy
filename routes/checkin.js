@@ -4,6 +4,7 @@ const router = express.Router();
 const Checkin = require('../models/Checkin');
 const User = require('../models/User');
 const dayjs = require('dayjs'); // หรือใช้ require('moment');
+const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
@@ -41,7 +42,7 @@ router.post('/', async (req, res, next) => {
     // แปลง Base64 เป็นไฟล์รูปภาพ
     const imageBuffer = Buffer.from(image, 'base64');
     const imageFilename = uuidv4(); // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
-    const imagePath = path.join(__dirname, 'images', `${imageFilename}.jpg`);
+    fs.writeFileSync(path.join(__dirname, '..', 'images', imageFilename + '.jpg'), imageBuffer);
 
     fs.writeFileSync(imagePath, imageBuffer);
 
