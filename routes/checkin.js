@@ -4,8 +4,10 @@ const router = express.Router();
 const Checkin = require('../models/Checkin');
 const User = require('../models/User');
 const dayjs = require('dayjs'); // หรือใช้ require('moment');
+const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
 
-// POST /checkin/insert - สำหรับบันทึก Checkin
+// POST /checkin - สำหรับบันทึก Checkin
 router.post('/', async (req, res, next) => {
   const { userId, time, image, location } = req.body;
 
@@ -36,10 +38,17 @@ router.post('/', async (req, res, next) => {
       return res.status(400).json({ error: 'ข้อมูล location ไม่ถูกต้อง' });
     }
 
+    // แปลง Base64 เป็นไฟล์รูปภาพ
+    const imageBuffer = Buffer.from(image, 'base64');
+    const imageFilename = uuidv4(); // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
+    const imagePath = path.join(__dirname, 'images', `${imageFilename}.jpg`);
+
+    fs.writeFileSync(imagePath, imageBuffer);
+
     const checkin = new Checkin({
       userId: user._id,
-      time: parsedTime.toDate(), // ใช้ค่าที่แปลงแล้ว
-      image,
+      time: parsedTime.toDate(),
+      image: imagePath, // ใช้ที่อยู่ของไฟล์รูปภาพ
       location: {
         type: 'Point',
         coordinates: location,
