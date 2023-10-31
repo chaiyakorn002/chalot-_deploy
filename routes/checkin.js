@@ -42,10 +42,9 @@ router.post('/', async (req, res, next) => {
     // แปลง Base64 เป็นไฟล์รูปภาพ
     const imageBuffer = Buffer.from(image, 'base64');
     const imageFilename = uuidv4(); // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
-    fs.writeFileSync(path.join(`../images${imageFilename}.jpg`), imageBuffer);
-
-    fs.writeFileSync(imagePath, imageBuffer);
-
+    const imagePath = path.join(__dirname, '../images', `${imageFilename}.jpg`);
+    fs.writeFileSync(imagePath, imageBuffer);    
+    
     const checkin = new Checkin({
       userId: user._id,
       time: parsedTime.toDate(),
