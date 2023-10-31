@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const products = require('./routes/products');
 const loginRouter = require('./routes/login');
 const checkinRouter = require('./routes/checkin'); // เรียกใช้เส้นทาง Checkin
-const uploadingImages = require('./uploadingimages');
+const uploadingImages = require('./routes/uploadingimages');
 
 
 const cors = require('cors')
