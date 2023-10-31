@@ -5,7 +5,7 @@ const multer = require('multer'); // ใช้ multer เพื่อจัด�
 // กำหนดตำแหน่งที่จะบันทึกไฟล์
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // บันทึกไฟล์ในโฟลเดอร์ uploads
+    cb(null, './uploads'); // บันทึกไฟล์ในโฟลเดอร์ uploads
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname); // กำหนดชื่อไฟล์ที่จะถูกบันทึก
