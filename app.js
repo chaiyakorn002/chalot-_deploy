@@ -8,7 +8,6 @@ const products = require('./routes/products');
 const loginRouter = require('./routes/login');
 const checkinRouter = require('./routes/checkin'); // เรียกใช้เส้นทาง Checkin
 const uploadRouter =  require('./routes/uploadingimages');
-const imagePath = path.join(__dirname, 'uploads', imageName);
 
 const cors = require('cors')
 require('dotenv').config()
@@ -37,7 +36,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 app.use('/uploads', express.static('uploads'));
 app.use('/upload', express.static('uploads'));
-app.use('/getimage', require('./routes/getimage')); 
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -45,7 +43,6 @@ app.use('/products', products);
 app.use('/login', loginRouter);
 app.use('/checkin', checkinRouter); // เรียกใช้เส้นทาง API Checkin
 app.use('/upload', uploadRouter);
-app.use('/upload', uplgetimageRouteradRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
