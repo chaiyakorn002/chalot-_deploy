@@ -1,4 +1,3 @@
-// routes/checkin.js
 const express = require('express');
 const router = express.Router();
 const Checkin = require('../models/Checkin');
@@ -7,6 +6,14 @@ const dayjs = require('dayjs'); // หรือใช้ require('moment');
 const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
+
+// Define the directory path for images
+const imagesDir = path.join(__dirname, 'images');
+
+// Ensure the images directory exists
+if (!fs.existsSync(imagesDir)) {
+  fs.mkdirSync(imagesDir, { recursive: true });
+}
 
 // POST /checkin - สำหรับบันทึก Checkin
 router.post('/', async (req, res, next) => {
@@ -42,7 +49,7 @@ router.post('/', async (req, res, next) => {
     // แปลง Base64 เป็นไฟล์รูปภาพ
     const imageBuffer = Buffer.from(image, 'base64');
     const imageFilename = uuidv4(); // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
-    const imagePath = path.join(__dirname, 'images', `${imageFilename}.jpg`);
+    const imagePath = path.join(imagesDir, `${imageFilename}.jpg`);
     fs.writeFileSync(imagePath, imageBuffer);    
     
     const checkin = new Checkin({
