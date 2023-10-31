@@ -5,7 +5,7 @@ const Checkin = require('../models/Checkin');
 const User = require('../models/User');
 const dayjs = require('dayjs'); // หรือใช้ require('moment');
 
-// POST /checkin/insert - สำหรับบันทึก Checkin
+// POST /checkin - สำหรับบันทึก Checkin
 router.post('/', async (req, res, next) => {
   const { userId, time, image, location } = req.body;
 
