@@ -6,6 +6,7 @@ var logger = require('morgan');
 const mongoose = require('mongoose');
 const products = require('./routes/products');
 const loginRouter = require('./routes/login');
+const uploadRouter = require('./routes/uploads');
 const cors = require('cors');
 require('dotenv').config();
 const uri = process.env.MONGO_URI;
@@ -36,27 +37,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/products', products);
 app.use('/login', loginRouter);
-
-// Include the /upload route and Multer middleware
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + ".png");
-  }
-});
-const upload = multer({ storage: storage });
-
-app.post('/upload', upload.single('file'), (req, res) => {
-  if (req.file) {
-    const imageUrl = req.file.filename;
-    res.status(200).json({ status: 'success', message: 'Image uploaded', imageUrl });
-  } else {
-    res.status(400).json({ status: 'error', message: 'No file uploaded' });
-  }
-});
-
+app.use('/uploads', uploadRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
